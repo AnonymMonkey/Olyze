@@ -4,11 +4,12 @@ import { FeedbackService } from './core/services/feedback';
 import { CommonModule } from '@angular/common';
 
 import { Navbar } from './shared/components/navbar/navbar';
+import { AdminDashboard } from './features/admin-dashboard/admin-dashboard';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, Navbar],
+  imports: [CommonModule, RouterOutlet, AdminDashboard, Navbar],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
