@@ -1,1 +1,3 @@
-<p>admin-dashboard works!</p>
+<div *ngFor="let f of allFeedbacks$ | async">
+  <p>{{ f.content }}</p>
+</div>
