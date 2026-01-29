@@ -3,9 +3,12 @@ import { RouterOutlet } from '@angular/router';
 import { FeedbackService } from './core/services/feedback';
 import { CommonModule } from '@angular/common';
 
+import { Navbar } from './shared/components/navbar/navbar';
+
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule],
+  standalone: true,
+  imports: [RouterOutlet, CommonModule, Navbar],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -24,7 +27,6 @@ export class App {
       'Könnten wir ein dunkles Design (Dark Mode) bekommen?',
       'Der Support war heute extrem hilfreich, danke!',
     ];
-    // Sucht zufällig eine Nachricht aus
     const randomText = messages[Math.floor(Math.random() * messages.length)];
     this.feedbackService.sendTestFeedbackWithAI(randomText);
   }
