@@ -1,12 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import {
-  Firestore,
-  collection,
-  addDoc,
-  collectionData,
-  query,
-  orderBy,
-} from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, collectionData, query, orderBy, doc, deleteDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { AiService } from './ai';
 
@@ -69,4 +62,14 @@ export class FeedbackService {
     const q = query(colRef, orderBy('timestamp', 'desc'));
     return collectionData(q, { idField: 'id' }) as Observable<Feedback[]>;
   }
+
+  async deleteFeedback(id: string) {
+  try {
+    const docRef = doc(this.firestore, `feedbacks/${id}`);
+    await deleteDoc(docRef);
+    console.log("Dokument gelöscht:", id);
+  } catch (e) {
+    console.error("Fehler beim Löschen:", e);
+  }
+}
 }
