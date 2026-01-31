@@ -71,5 +71,15 @@ export class FeedbackService {
   } catch (e) {
     console.error("Fehler beim Löschen:", e);
   }
+
+  async deleteFeedback(id: string) {
+  try {
+    const docRef = doc(this.firestore, `feedbacks/${id}`);
+    await deleteDoc(docRef);
+    console.log("Dokument gelöscht:", id);
+  } catch (e) {
+    console.error("Fehler beim Löschen:", e);
+  }
+}
 }
 }
