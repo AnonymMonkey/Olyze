@@ -4,12 +4,50 @@ import { FeedbackService } from '../../core/services/feedback';
 
 @Component({
   selector: 'app-admin-dashboard',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './admin-dashboard.html',
 })
 export class AdminDashboard {
   public feedbackService = inject(FeedbackService);
+  feedbacks$ = this.feedbackService.getFeedbacks();
+
+  userInput = '';
+
+  async submitFeedback() {
+    if (!this.userInput.trim()) return; 
+
+    console.log("Sende Benutzereingabe an KI:", this.userInput);
+    
+    await this.feedbackService.sendTestFeedbackWithAI(this.userInput);
+    
+    this.userInput = '';
+  }
+
+deleteItem(id: string | undefined) {
+  if (!id) return;
+  
+  if (confirm('Möchtest du dieses Feedback wirklich löschen?')) {
+    this.feedbackService.deleteFeedback(id);
+  }
+}
+
+  getEmoji(sentiment: string): string {
+  switch (sentiment) {
+    case 'POSITIV': return '✅';
+    case 'NEGATIV': return '🚨';
+    case 'NEUTRAL': return '⚖️';
+    default: return '❓';
+  }
+}
+
+getBorderColor(sentiment: string): string {
+  switch (sentiment) {
+    case 'POSITIV': return '6px solid #4caf50';
+    case 'NEGATIV': return '6px solid #f44336';
+    case 'NEUTRAL': return '6px solid #ffeb3b';
+    default: return '6px solid #ccc';
+  }
+}
 
   triggerAiTest() {
     const testTexte = [
