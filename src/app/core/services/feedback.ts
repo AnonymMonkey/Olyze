@@ -3,7 +3,6 @@ import { Firestore, collection, addDoc, collectionData, query, orderBy, doc, del
 import { Observable } from 'rxjs';
 import { AiService } from './ai';
 
-// Definiert die Struktur für ein Feedback-Objekt
 export interface Feedback {
   id?: string;
   content: string;
@@ -46,11 +45,11 @@ export class FeedbackService {
   }
 
 
-  getFeedbacks(): Observable<Feedback[]> {
-    const colRef = collection(this.firestore, 'feedbacks');
-    const q = query(colRef, orderBy('timestamp', 'desc'));
-    return collectionData(q, { idField: 'id' }) as Observable<Feedback[]>;
-  }
+getFeedbacks(): Observable<any[]> {
+  const colRef = collection(this.firestore, 'feedbacks');
+  const q = query(colRef, orderBy('timestamp', 'desc'));
+  return collectionData(q, { idField: 'id' }) as Observable<any[]>;
+}
 
   async deleteFeedback(id: string) {
   try {

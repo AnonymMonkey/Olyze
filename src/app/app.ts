@@ -2,13 +2,13 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { FeedbackService } from './core/services/feedback';
 import { CommonModule } from '@angular/common';
-
+import { AdminDashboard } from './features/admin-dashboard/admin-dashboard';
 import { Navbar } from './shared/components/navbar/navbar';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, Navbar],
+  imports: [RouterOutlet, CommonModule, Navbar, AdminDashboard],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

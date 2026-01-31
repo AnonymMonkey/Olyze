@@ -5,14 +5,11 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
   providedIn: 'root',
 })
 export class AiService {
-  // Ersetze dies mit deinem echten Key
   private readonly API_KEY = 'AIzaSyAVA-6RP__wJ-hzTzCVtAcomocQhy6uNjQ';
   private genAI = new GoogleGenerativeAI(this.API_KEY);
 
   async analyzeFeedback(text: string) {
     try {
-      // Wir erstellen das Model erst GENAU JETZT beim Aufruf
-      // Wir nutzen gemini-1.5-flash, da gemini-pro oft veraltet ist
       const model = this.genAI.getGenerativeModel(
         { model: 'gemini-1.5-flash' },
         { apiVersion: 'v1' },
@@ -25,7 +22,6 @@ export class AiService {
       return { sentiment: 'analysiert', summary: response.text() };
     } catch (e: any) {
       console.error('DEBUG-INFO:', e);
-      // Falls es immer noch 404 wirft, simulieren wir für Partner A
       return { sentiment: 'neutral', summary: 'KI im Wartungsmodus (Simuliert)' };
     }
   }

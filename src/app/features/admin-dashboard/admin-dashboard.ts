@@ -5,7 +5,7 @@ import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [CommonModule, RouterOutlet],
+  imports: [CommonModule],
   templateUrl: './admin-dashboard.html',
   styleUrl: './admin-dashboard.scss',
 })
@@ -25,7 +25,9 @@ export class AdminDashboard {
     this.userInput = '';
   }
 
-  deleteItem(id: string) {
+deleteItem(id: string | undefined) {
+  if (!id) return;
+  
   if (confirm('Möchtest du dieses Feedback wirklich löschen?')) {
     this.feedbackService.deleteFeedback(id);
   }
@@ -42,9 +44,9 @@ export class AdminDashboard {
 
 getBorderColor(sentiment: string): string {
   switch (sentiment) {
-    case 'POSITIV': return '6px solid #4caf50'; // Grün
-    case 'NEGATIV': return '6px solid #f44336'; // Rot
-    case 'NEUTRAL': return '6px solid #ffeb3b'; // Gelb
+    case 'POSITIV': return '6px solid #4caf50';
+    case 'NEGATIV': return '6px solid #f44336';
+    case 'NEUTRAL': return '6px solid #ffeb3b';
     default: return '6px solid #ccc';
   }
 }
