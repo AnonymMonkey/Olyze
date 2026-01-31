@@ -10,11 +10,6 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './admin-dashboard.scss',
 })
 export class AdminDashboard {
-<<<<<<< Updated upstream
-  private feedbackService = inject(FeedbackService);
-  
-  allFeedbacks$ = this.feedbackService.getFeedbacks();
-=======
   public feedbackService = inject(FeedbackService);
   feedbacks$ = this.feedbackService.getFeedbacks();
 
@@ -66,5 +61,4 @@ getBorderColor(sentiment: string): string {
     console.log('Sende Test-Text an KI:', randomText);
     this.feedbackService.sendTestFeedbackWithAI(randomText);
   }
->>>>>>> Stashed changes
 }
