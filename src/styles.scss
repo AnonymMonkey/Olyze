@@ -1,14 +1,29 @@
-@use './styles/variables' as vars;
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: vars.$bg-color;
-  scroll-behavior: smooth;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+@import 'variables';
 
 * {
   box-sizing: border-box;
   border: 1px solid red;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: var(--bg-color);
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.app-container {
+  max-width: var(--app-max-width);
+  padding: 80px 20px 40px;
+  min-height: calc(100vh - var(--navbar-height));
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: var(--app-gap-16);
 }

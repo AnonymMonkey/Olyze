@@ -1,3 +1,28 @@
-$primary-color: #4f46e5;
-$bg-color: #f3f4f6;
-$card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+:root {
+  // sizes
+  --app-max-width: 1200px;
+  --app-padding-16: 16px;
+  --app-padding-8: 8px;
+
+  --app-gap-16: 16px;
+  --app-gap-8: 8px;
+
+  --navbar-height: 128px;
+
+  // colors
+  --primary-color: #722f37;
+  --secondary-color: #28282b;
+
+  --transparent: rgba(0, 0, 0, 0);
+
+  --bg-color: rgb(75, 75, 75);
+  --text-color-light: white;
+  --text-color-dark: black;
+
+  --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+  //   fonts
+  --font-size-l: 2em;
+  --font-size-m: 1.5rem;
+  --font-size-s: 1rem;
+}
