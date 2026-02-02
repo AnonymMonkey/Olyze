@@ -1,257 +1,99 @@
-<div
-  class="dashboard-container"
-  style="max-width: 800px; margin: 20px auto; font-family: sans-serif"
->
-  <div
-    class="feedback-input-card"
-    style="
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      margin-bottom: 30px;
-    "
-  >
-    <h3 style="margin-top: 0">Neues Feedback einreichen</h3>
+<div class="dashboard-container">
+  <div class="feedback-input-card">
+    <h3>Neues Feedback einreichen</h3>
 
     <textarea
       [value]="userInput"
       (input)="userInput = $any($event.target).value"
       placeholder="Wie war dein Erlebnis mit Olyze heute?"
-      style="
-        width: 100%;
-        min-height: 80px;
-        padding: 12px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        font-family: inherit;
-        resize: vertical;
-        box-sizing: border-box;
-      "
-    ></textarea>
-
-    <div
-      style="
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 10px;
-        align-items: center;
-        gap: 15px;
-      "
     >
-      <span
-        *ngIf="feedbackService.lastActionStatus() === 'sending'"
-        style="font-size: 0.9rem; color: #666"
-      >
-        🔄 KI analysiert...
-      </span>
+    </textarea>
 
+    <div class="input-row">
+      <span *ngIf="feedbackService.lastActionStatus() === 'sending'">🔄 KI analysiert...</span>
       <button
+        class="submit-button"
         (click)="submitFeedback()"
         [disabled]="!userInput.trim() || feedbackService.lastActionStatus() === 'sending'"
-        style="
-          background: #007bff;
-          color: white;
-          border: none;
-          padding: 10px 20px;
-          border-radius: 6px;
-          cursor: pointer;
-          font-weight: bold;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        "
       >
-        <div *ngIf="feedbackService.lastActionStatus() === 'sending'" class="spinner"></div>
-        <span>
-          {{
-            feedbackService.lastActionStatus() === 'sending'
-              ? 'KI analysiert...'
-              : 'Feedback abschicken'
-          }}
-        </span>
+        Feedback abschicken
       </button>
     </div>
   </div>
 
   <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0" />
 
-  <div style="margin-bottom: 20px">
-    <div style="position: relative; display: flex; align-items: center">
-      <span style="position: absolute; left: 12px; color: #999">🔍</span>
-      <input
-        type="text"
-        placeholder="Feedbacks durchsuchen..."
-        (input)="updateSearch($event)"
-        style="
-          width: 100%;
-          padding: 10px 10px 10px 35px;
-          border: 1px solid #ddd;
-          border-radius: 25px;
-          font-family: inherit;
-          outline: none;
-          transition: border-color 0.2s;
-        "
-        onfocus="this.style.borderColor = '#007bff'"
-        onblur="this.style.borderColor = '#ddd'"
-      />
+  <div class="search-wrapper">
+    <span class="search-icon">🔍</span>
+    <input type="text" placeholder="Feedbacks durchsuchen..." (input)="updateSearch($event)" />
+  </div>
+
+  <div *ngIf="feedbacks$ | async as list" class="stats-board">
+    <div class="stat-item">
+      <span class="num">{{ list.length }}</span>
+      <span class="label">Gesamt</span>
+    </div>
+    <div class="stat-item pos">
+      <span class="num">{{ getCount(list, 'POSITIV') }}</span>
+      <span class="label">Positiv</span>
+    </div>
+    <div class="stat-item neg">
+      <span class="num">{{ getCount(list, 'NEGATIV') }}</span>
+      <span class="label">Negativ</span>
     </div>
   </div>
 
-  <div
-    *ngIf="feedbacks$ | async as list"
-    style="
-      display: flex;
-      gap: 20px;
-      margin-bottom: 20px;
-      background: #f0f2f5;
-      padding: 15px;
-      border-radius: 8px;
-    "
-  >
-    <div style="text-align: center; flex: 1">
-      <div style="font-size: 1.2rem; font-weight: bold">{{ list.length }}</div>
-      <div style="font-size: 0.7rem; color: #666; text-transform: uppercase">Gesamt</div>
-    </div>
-    <div style="text-align: center; flex: 1; color: #4caf50">
-      <div style="font-size: 1.2rem; font-weight: bold">{{ getCount(list, 'POSITIV') }}</div>
-      <div style="font-size: 0.7rem; text-transform: uppercase">Positiv</div>
-    </div>
-    <div style="text-align: center; flex: 1; color: #f44336">
-      <div style="font-size: 1.2rem; font-weight: bold">{{ getCount(list, 'NEGATIV') }}</div>
-      <div style="font-size: 0.7rem; text-transform: uppercase">Negativ</div>
-    </div>
-  </div>
+  <h2>📥 Feedback Monitor</h2>
 
-  <div
-    class="header"
-    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px"
-  >
-    <h2>📥 Feedback Monitor</h2>
-  </div>
-
-  <div style="display: flex; gap: 10px; margin-bottom: 20px">
+  <div class="filter-row">
     <button
       (click)="setFilter('ALLE')"
-      [style.background]="currentFilter() === 'ALLE' ? '#444' : '#eee'"
-      [style.color]="currentFilter() === 'ALLE' ? 'white' : '#333'"
-      style="
-        border: none;
-        padding: 6px 15px;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: 0.2s;
-      "
+      class="filter-btn"
+      [class.active-all]="currentFilter() === 'ALLE'"
     >
       Alle
     </button>
     <button
       (click)="setFilter('POSITIV')"
-      [style.background]="currentFilter() === 'POSITIV' ? '#4caf50' : '#eee'"
-      [style.color]="currentFilter() === 'POSITIV' ? 'white' : '#333'"
-      style="
-        border: none;
-        padding: 6px 15px;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: 0.2s;
-      "
+      class="filter-btn"
+      [class.active-pos]="currentFilter() === 'POSITIV'"
     >
       ✅ Positiv
     </button>
     <button
       (click)="setFilter('NEGATIV')"
-      [style.background]="currentFilter() === 'NEGATIV' ? '#f44336' : '#eee'"
-      [style.color]="currentFilter() === 'NEGATIV' ? 'white' : '#333'"
-      style="
-        border: none;
-        padding: 6px 15px;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: 0.2s;
-      "
+      class="filter-btn"
+      [class.active-neg]="currentFilter() === 'NEGATIV'"
     >
       🚨 Negativ
     </button>
   </div>
 
-  <div
-    *ngFor="let item of getFilteredFeedbacks(feedbacks$ | async)"
-    [@listAnimation]
-    class="feedback-card"
-    [style.border-left]="getBorderColor(item.sentiment)"
-    style="
-      margin: 15px 0;
-      padding: 15px;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-      position: relative;
-    "
-  >
-    <button
-      (click)="deleteItem(item.id!)"
-      style="
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: none;
-        border: none;
-        color: #ccc;
-        cursor: pointer;
-        font-size: 1.2rem;
-      "
-      onmouseover="this.style.color = '#f44336'"
-      onmouseout="this.style.color = '#ccc'"
+  <div class="feedback-list-container">
+    <div
+      *ngFor="let item of getFilteredFeedbacks(feedbacks$ | async)"
+      class="feedback-card"
+      [style.border-left]="getBorderColor(item.sentiment)"
     >
-      &times;
-    </button>
+      <button (click)="deleteItem(item.id!)" class="delete-btn">&times;</button>
 
-    <div style="display: flex; justify-content: space-between; align-items: flex-start">
-      <div style="flex: 1">
-        <span style="font-weight: bold; font-size: 0.9rem; text-transform: uppercase; color: #444">
-          {{ getEmoji(item.sentiment) }} {{ item.sentiment }}
-        </span>
-        <p style="margin: 8px 0; color: #333; line-height: 1.4">{{ item.content }}</p>
+      <div class="card-content-wrapper">
+        <div class="text-area">
+          <span class="sentiment-title">{{ getEmoji(item.sentiment) }} {{ item.sentiment }}</span>
+          <p>{{ item.content }}</p>
+        </div>
+        <small class="time-text">{{ item.timestamp | date: 'HH:mm' }} Uhr</small>
       </div>
-      <small
-        style="
-          color: #999;
-          position: relative;
-          bottom: -46px;
-          white-space: nowrap;
-          margin-left: 10px;
-        "
-      >
-        {{ item.timestamp | date: 'HH:mm' }} Uhr
-      </small>
+
+      <div *ngIf="item.summary" class="ai-box">
+        <span class="ai-label">🤖 KI-Analyse</span>
+        <p class="ai-text">"{{ item.summary }}"</p>
+      </div>
     </div>
 
-    <div
-      *ngIf="item.summary"
-      style="
-        margin-top: 10px;
-        padding: 10px;
-        background: #f8f9fa;
-        border-left: 4px solid #007bff;
-        border-radius: 4px;
-      "
-    >
-      <span
-        style="
-          font-size: 0.7rem;
-          font-weight: bold;
-          color: #007bff;
-          text-transform: uppercase;
-          display: block;
-          margin-bottom: 4px;
-        "
-      >
-        🤖 KI-Analyse
-      </span>
-      <p style="margin: 0; font-size: 0.85rem; color: #555; font-style: italic; line-height: 1.3">
-        "{{ item.summary }}"
-      </p>
+    <div *ngIf="getFilteredFeedbacks(feedbacks$ | async).length === 0" class="empty-state">
+      <div class="icon">🔍</div>
+      <p>Keine Feedbacks für diesen Filter gefunden.</p>
     </div>
   </div>
 </div>

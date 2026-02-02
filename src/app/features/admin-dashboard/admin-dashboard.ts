@@ -8,6 +8,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './admin-dashboard.html',
+  styleUrl: './admin-dashboard.scss',
   animations: [
     trigger('listAnimation', [
       transition(':enter', [

@@ -4,24 +4,32 @@ import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AiService {
-  private readonly API_KEY = 'AIzaSyAVA-6RP__wJ-hzTzCVtAcomocQhy6uNjQ';
-  private genAI = new GoogleGenerativeAI(this.API_KEY);
+  private genAI: GoogleGenerativeAI;
+
+  constructor() {
+    const key = (environment as any).geminiApiKey;
+    this.genAI = new GoogleGenerativeAI(key);
+  }
 
   async analyzeFeedback(text: string) {
     try {
-      const model = this.genAI.getGenerativeModel(
-        { model: 'gemini-1.5-flash' },
-        { apiVersion: 'v1' },
-      );
-
-      const prompt = `Analysiere dieses Feedback: "${text}". Antworte kurz ob es positiv oder negativ ist.`;
+      const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const prompt = `Analysiere dieses Feedback: "${text}". Antworte nur mit SENTIMENT: [POSITIV/NEGATIV] und einer SUMMARY.`;
 
       const result = await model.generateContent(prompt);
-      const response = await result.response;
-      return { sentiment: 'analysiert', summary: response.text() };
+      const responseText = result.response.text();
+
+      let sentiment = 'NEUTRAL';
+      if (responseText.toUpperCase().includes('POSITIV')) sentiment = 'POSITIV';
+      else if (responseText.toUpperCase().includes('NEGATIV')) sentiment = 'NEGATIV';
+
+      return {
+        sentiment,
+        summary: responseText.split('SUMMARY:')[1]?.trim() || responseText,
+      };
     } catch (e: any) {
-      console.error('DEBUG-INFO:', e);
-      return { sentiment: 'neutral', summary: 'KI im Wartungsmodus (Simuliert)' };
+      console.error('KI-Dienst Fehler:', e);
+      return { sentiment: 'NEUTRAL', summary: 'Fehler: ' + e.message };
     }
   }
 }
