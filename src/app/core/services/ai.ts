@@ -1,35 +1,33 @@
 import { Injectable } from '@angular/core';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AiService {
-  private genAI: GoogleGenerativeAI;
-
-  constructor() {
-    const key = (environment as any).geminiApiKey;
-    this.genAI = new GoogleGenerativeAI(key);
-  }
+  private apiUrl = '/api/sentiment';
 
   async analyzeFeedback(text: string) {
     try {
-      const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-      const prompt = `Analysiere dieses Feedback: "${text}". Antworte nur mit SENTIMENT: [POSITIV/NEGATIV] und einer SUMMARY.`;
+      const response = await fetch(this.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text }),
+      });
 
-      const result = await model.generateContent(prompt);
-      const responseText = result.response.text();
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`API Fehler ${response.status}: ${errText}`);
+      }
 
-      let sentiment = 'NEUTRAL';
-      if (responseText.toUpperCase().includes('POSITIV')) sentiment = 'POSITIV';
-      else if (responseText.toUpperCase().includes('NEGATIV')) sentiment = 'NEGATIV';
+      const result = await response.json();
 
       return {
-        sentiment,
-        summary: responseText.split('SUMMARY:')[1]?.trim() || responseText,
+        sentiment: result.sentiment,
+        summary: `Score: ${result.score}`,
       };
     } catch (e: any) {
-      console.error('KI-Dienst Fehler:', e);
-      return { sentiment: 'NEUTRAL', summary: 'Fehler: ' + e.message };
+      console.error('KI Fehler:', e);
+      return { sentiment: 'FEHLER', summary: e.message };
     }
   }
 }
